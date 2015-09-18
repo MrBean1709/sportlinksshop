@@ -23,7 +23,7 @@ use Tygh\Session;
 use Tygh\Settings;
 use Tygh\Shippings\Shippings;
 use Tygh\Navigation\LastView;
-
+ini_set('default_socket_timeout', 1000);
 if (!defined('BOOTSTRAP')) { die('Access denied'); }
 
 // EDIT: fireflyinnov
@@ -34,7 +34,6 @@ if (!defined('BOOTSTRAP')) { die('Access denied'); }
  * @return array(int number_tracking, label_url)
  */
 function fn_aramex_api_create_shipment ($origination, $location, $aramex_service_params, $more_info) {
-    die();
     if (empty($origination) || empty($location) || empty($aramex_service_params) || empty($more_info)) {
         return false;
     }
@@ -54,8 +53,8 @@ function fn_aramex_api_create_shipment ($origination, $location, $aramex_service
                     'AccountNumber' => $aramex_service_params['account_number'],
                     'PartyAddress'  => array(
                         'Line1'                 => $origination['address'],
-                        //'City'                  => '',
-                        'PostCode'               => $origination['zipcode'],
+                        'City'                  => $origination['city'],
+                        'PostCode'              => $origination['zipcode'],
                         'CountryCode'           => $origination['country']
                     ),
                     'Contact'       => array(
@@ -63,22 +62,22 @@ function fn_aramex_api_create_shipment ($origination, $location, $aramex_service
                         'CompanyName'           => $origination['name'],
                         'PhoneNumber1'          => $origination['phone'],
                         'CellPhone'             => $origination['phone'],
-                        'EmailAddress'          => 'tratt@fireflyinnov.com'
+                        'EmailAddress'          => $origination['customer_email']
                         ),
                 ),
                 'Consignee' => array(
                     'PartyAddress'  => array(
                         'Line1'                 => $location['address'],
-                        //'City'                  => '',
-                        'PostCode'               => $location['zipcode'],
+                        'City'                  => $location['city'],
+                        'PostCode'              => $location['zipcode'],
                         'CountryCode'           => $location['country']
                     ),
                     'Contact'       => array(
                         'PersonName'            => $location['firstname'] .' '. $location['lastname'],
                         'CompanyName'           => $location['firstname'] .' '. $location['lastname'],
-                        'PhoneNumber1'          => $more_info['customer_phone'],
-                        'CellPhone'             => $more_info['customer_phone'],
-                        'EmailAddress'          => $more_info['customer_email'],
+                        'PhoneNumber1'          => $location['phone'],
+                        'CellPhone'             => $location['phone'],
+                        'EmailAddress'          => $origination['customer_email']
                     )
                 ),
                 'ShippingDateTime' => time(),
@@ -90,7 +89,7 @@ function fn_aramex_api_create_shipment ($origination, $location, $aramex_service
                                 'ProductGroup'          => $origination['country'] == $location['country'] ? 'DOM' : 'EXP',
                                 'ProductType'           => $service_type,
                                 'PaymentType'           => 'P',
-                                'NumberOfPieces'        => $more_info['number_pieces'],
+                                'NumberOfPieces'        => '1',
                                 'DescriptionOfGoods'    => 'None',
                                 'GoodsOriginCountry'    => $origination['country']
 
@@ -115,16 +114,13 @@ function fn_aramex_api_create_shipment ($origination, $location, $aramex_service
             'ReportType' => 'URL'
         ),
     );
-
-    $soapClient = new SoapClient('shipping-services-api.wsdl', array('trace' => 1,'cache_wsdl' => WSDL_CACHE_NONE ));
+    $soapClient = new \SoapClient(DIR_ROOT . "/" ."shipping-services-api.wsdl", array('trace' => 1,'cache_wsdl' => WSDL_CACHE_NONE,"exception" => 0 ));
     $result = $soapClient->CreateShipments($params);
-
     if (gettype($result) != 'object' || !empty($result->HasErrors)) {
         return false;
     }
-    die();
     return array(
-        'number_tracking' => $result->Shipments->ProcessedShipment->ID ,
+        'tracking_number' => $result->Shipments->ProcessedShipment->ID ,
         'label_info' => $result->Shipments->ProcessedShipment->ShipmentLabel->LabelURL
     );
 }
@@ -1866,7 +1862,6 @@ function fn_get_order_info($order_id, $native_language = false, $format_info = t
 
             $order['doc_ids'] = db_get_hash_single_array("SELECT type, doc_id FROM ?:order_docs WHERE order_id = ?i", array('type', 'doc_id'), $order_id);
         }
-
         fn_set_hook('get_order_info', $order, $additional_data);
 
         return $order;
@@ -6366,7 +6361,7 @@ function fn_update_shipment($shipment_data, $shipment_id = 0, $group_key = 0, $a
 {
 
     if (!empty($shipment_id)) {
-        $arow = db_query("UPDATE ?:shipments SET tracking_number = ?s, carrier = ?s WHERE shipment_id = ?i", $shipment_data['tracking_number'], $shipment_data['carrier'], $shipment_id);
+        $arow = db_query("UPDATE ?:shipments SET tracking_number = ?s, comments = ?s, carrier = ?s WHERE shipment_id = ?i", $shipment_data['tracking_number'], $shipment_data['comments'],$shipment_data['carrier'], $shipment_id);
         if ($arow === false) {
             fn_set_notification('E', __('error'), __('object_not_found', array('[object]' => __('shipment'))),'','404');
             $shipment_id = false;

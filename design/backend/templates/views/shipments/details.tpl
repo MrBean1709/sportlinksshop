@@ -48,7 +48,7 @@
 
         <p>{__("shipment")} #{$shipment.shipment_id}
         {__("on")} {$shipment.shipment_timestamp|date_format:"`$settings.Appearance.date_format`"} <br />
-        {__("by")} {$shipment.shipping} <br />{if $shipment.tracking_number} ({$shipment.tracking_number}){/if}{if $shipment.carrier} ({$smarty.capture.carrier_name|trim nofilter}){/if}</p>
+        {__("by")} {$shipment.shipping} <br />{if $shipment.tracking_number} <a href="{$shipment.comments}" target="_blank">({$shipment.tracking_number})</a>{/if}{if $shipment.carrier} ({$smarty.capture.carrier_name|trim nofilter}){/if}</p>
         {hook name="shipments:customer_shot_info"}
         {/hook}
     </div>

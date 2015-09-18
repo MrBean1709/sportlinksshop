@@ -25,25 +25,29 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
         if($_REQUEST['shipment_data']['shipping_id'] == "1"){
             $order_info = fn_get_order_info($_REQUEST['shipment_data']['order_id'], false, true, true);
-            $location = $order_info['location'];
-            var_dump();
-            var_dump(json_encode($order_info['company_id']));
-            var_dump('<br/>');
-            var_dump($location);
-            $aramex_service_params = fn_get_shipping_info($_REQUEST['shipment_data']['shipping_id'], Registry::get('settings.Appearance.admin_elements_per_page'));
-            $shipping_info = array(
-                'account_country_code'    => $aramex_service_params['service_params']['account_country_code'],
-                'account_entity'         => $aramex_service_params['service_params']['account_entity'],
-                'account_number'         => $aramex_service_params['service_params']['account_number'],
-                'account_pin'            => $aramex_service_params['service_params']['account_pin'],
-                'username'              => $aramex_service_params['service_params']['username'],
-                'password'              => $aramex_service_params['service_params']['password'],
-                'version'               => $aramex_service_params['service_params']['version']
+            $origination = $order_info['product_groups'][0]['package_info']['origination'];
+            $origination["customer_email"] = $order_info['email'];
+            $location = $order_info['product_groups'][0]['package_info']['location'];
+            if($location['phone'] == NULL){
+                $location['phone'] = $origination['phone'];
+            }
+            $more_info = array (
+                'weight' => $order_info['product_groups'][0]['package_info']['packages'][0]['weight']
             );
-            die();
-            $result = fn_aramex_api_create_shipment ($origination, $location, $shipping_info, $more_info);
+            $shipping_info = fn_get_shipping_info($_REQUEST['shipment_data']['shipping_id'], Registry::get('settings.Appearance.admin_elements_per_page'));
+            $aramex_service_params = array(
+                'account_country_code'    => $shipping_info['service_params']['account_country_code'],
+                'account_entity'         => $shipping_info['service_params']['account_entity'],
+                'account_number'         => $shipping_info['service_params']['account_number'],
+                'account_pin'            => $shipping_info['service_params']['account_pin'],
+                'username'              => $shipping_info['service_params']['username'],
+                'password'              => $shipping_info['service_params']['password'],
+                'version'               => $shipping_info['service_params']['version']
+            );
+            $result = fn_aramex_api_create_shipment ($origination, $location, $aramex_service_params, $more_info);
+            $_REQUEST['shipment_data']['tracking_number'] = $result['tracking_number'];
+            $_REQUEST['shipment_data']['comments'] = $result['label_info'];
         }
-        die;
         fn_update_shipment($_REQUEST['shipment_data'], 0, 0, false, $force_notification);
 
         $suffix = '.details?order_id=' . $_REQUEST['shipment_data']['order_id'];
