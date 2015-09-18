@@ -1,0 +1,56 @@
+<?xml version="1.0"?>
+<addon scheme="2.0">
+	<id>1clue_related_products</id>
+	<name>Related products</name>
+	<description>Allows you to sepcify cross-linked or bi-directional links among the products</description>
+	<priority>112</priority>
+	<position>0</position>
+	<status>active</status>
+	<settings>
+		 <sections>
+            <section id="general">
+                <name>General</name>
+                <items>
+					<item id="link_type">
+						<name>Select the product links type</name>
+						<translations>
+							<item for="link_type" lang="RU">Выберите тип связей продуктов</item>
+						</translations>
+						<type>selectbox</type>
+						<default_value>cross_linked</default_value>
+						<variants>
+							<item id="cross_linked">
+								<name>Cross-linked</name>
+								<translations />
+							</item>
+							<item id="bi_directional">
+								<name>Bi-directional</name>
+								<translations />
+							</item>
+						</variants>
+					</item>
+				</items>
+			</section>
+		</sections>
+	</settings>
+	<queries>
+		<item>CREATE TABLE ?:addon_related_products_free (
+                          `master_id` int(11) NOT NULL,
+                          `slave_id` int(11) NOT NULL,
+                          PRIMARY KEY  (`master_id`,`slave_id`)
+                        ) ENGINE=MyISAM DEFAULT CHARSET=utf8</item>
+		<item for="uninstall">DROP TABLE IF EXISTS ?:addon_related_products_free</item>
+	</queries>
+	<translations>
+		<item for="name" lang="ru">Аналоги продукта</item>
+		<item for="description" lang="ru">Позволяет задавать связи продуктов, для отображения дополнительных товаров на детальной странице продукта</item>
+	</translations>
+	<language_variables>
+		<item id="related_products" lang="ru">Аналоги продукта</item>
+		<item id="related_products" lang="en">Related products</item>
+		<item id="related" lang="ru">Аналоги</item>
+		<item id="related" lang="en">Related</item>
+		<item id="text_notice_related_products" lang="ru"><![CDATA[Вы используете бесплатную версию модуля Аналоги продукта. Обратите внимание, что есть расширенная версия данного модуля с дополнительным функционалом, с которой вы можете ознакомиться на сайте <a href='http://1clue.com/related-products-extended.html' target="_blank">1clue.com</a><br />Более подробная информация о расширенной версии представленна в <a href='http://1clue.com/extended-version-of-related-products-add-on.html' target="_blank">этой инструкции</a>]]></item>
+		<item id="text_notice_related_products" lang="en"><![CDATA[You use free version of Related Products add-on. Checkout out the Extended version of this add-on with more features at <a href='http://1clue.com/related-products-extended.html' target="_blank">1clue.com</a>.<br /> The extended version allows you to use Export/Import to configure the related items. More details can be found in <a href='http://1clue.com/extended-version-of-related-products-add-on.html' target="_blank">this tutorial</a>]]></item>
+	</language_variables>
+</addon>

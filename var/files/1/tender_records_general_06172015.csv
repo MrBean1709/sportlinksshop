@@ -1,0 +1,5 @@
+Record sequence;Record Identifier;Receipt number;Tender code;Amount;Ref number;Expiry date;Branch;Location Code;Date;Time;EFT Card Type;EFT Account Type;EFT Audit Number;Shift;Pos/User ID;EFT Settlement Date;Change records;Foreign currency amount;Foreign currency exchange rate;Voucher Issue;EFTPOS Cashout Amount;Tender Line Number
+"sl000001";"TN";"123";"";"0";"";"";"63";"63";"20150617";"20150617";"";"";"";"";"0001";"";"N";"0";"0";"N";"";""
+"sl000002";"TN";"124";"";"0";"";"";"63";"63";"20150617";"20150617";"";"";"";"";"0001";"";"N";"0";"0";"N";"";""
+"sl000003";"TN";"125";"";"0";"";"";"63";"63";"20150617";"20150617";"";"";"";"";"0001";"";"N";"0";"0";"N";"";""
+"sl000004";"TN";"126";"";"0";"";"";"63";"63";"20150617";"20150617";"";"";"";"";"0001";"";"N";"0";"0";"N";"";""

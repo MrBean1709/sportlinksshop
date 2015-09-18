@@ -1,0 +1,105 @@
+<?xml version="1.0"?>
+<addon scheme="2.0">
+	<id>1clue_related_products_extended</id>
+	<name>Related products (extended)</name>
+	<description>Extended version of Related products add-on. Allows you to sepcify cross-linked or bi-directional links among the products. Display products in blocks or tabs. And many more.</description>
+	<priority>112</priority>
+	<position>0</position>
+	<status>active</status>
+	<dependencies></dependencies>
+	<settings>
+		 <sections>
+            <section id="general">
+                <name>General</name>
+                <items>
+					<item id="analogues_time">
+						<type>hidden</type>
+						<default_value>1800030715</default_value>
+					</item>
+					<item id="related_filling">
+						<name>Fill related products</name>
+						<translations>
+							<item for="related_filling" lang="ru">Метод выборки подобных товаров</item>
+						</translations>
+						<type>selectbox</type>
+						<tooltip>This setting allows you to use tags for showing related products automatically, or set relations manually</tooltip>
+						<default_value>manual</default_value>
+						<variants>
+							<item id="manual">
+								<name>Manually</name>
+								<translations>
+									<item for="manual" lang="ru">Вручную</item>
+								</translations>
+							</item>
+							<item id="tags">
+								<name>By tags</name>
+								<translations>
+									<item for="manual" lang="ru">На основе тегов</item>
+								</translations>
+							</item>
+						</variants>
+					</item>
+					<item id="link_type">
+						<name>Select the product links type</name>
+						<tooltip>This setting sets the type of products relationships. Please note that it does not take effect if related products are filled by tags.</tooltip>
+						<translations>
+							<item for="display_template" lang="ru">Выберите тип связей товаров</item>
+						</translations>
+						<type>selectbox</type>
+						<default_value>cross_linked</default_value>
+						<variants>
+							<item id="cross_linked">
+								<name>Cross-linked</name>
+								<translations />
+							</item>
+							<item id="bi_directional">
+								<name>Bi-directional</name>
+								<translations />
+							</item>
+							<item id="no_links">
+								<name>No links</name>
+								<translations />
+							</item>
+						</variants>
+					</item>
+					<item id="your_domain">
+						<type>hidden</type>
+						<default_value>www.sportslink.com.sg</default_value>
+					</item>
+				</items>
+			</section>
+		</sections>
+	</settings>
+	<queries>
+		<item>CREATE TABLE ?:addon_related_products (
+                          `master_id` int(11) NOT NULL,
+                          `slave_id` int(11) NOT NULL,
+                          PRIMARY KEY  (`master_id`,`slave_id`)
+                        ) ENGINE=MyISAM DEFAULT CHARSET=utf8</item>
+		<item for="uninstall">DROP TABLE IF EXISTS ?:addon_related_products</item>
+		<item>CREATE TABLE IF NOT EXISTS ?:addon_related_products_tags (
+                          `product_id` int(11) NOT NULL,
+                          `tag` char(64) NOT NULL,
+                          PRIMARY KEY  (`product_id`,`tag`),
+                          KEY  (`tag`(10))
+                        ) ENGINE=MyISAM DEFAULT CHARSET=utf8</item>
+		<item for="uninstall">DROP TABLE IF EXISTS ?:addon_related_products_tags</item>
+	</queries>
+	<translations>
+		<item for="name" lang="ru">Похожие товары</item>
+	</translations>
+	<language_variables>
+		<item id="related_products" lang="ru">Похожие товары</item>
+		<item id="related_products" lang="en">Related products</item>
+		<item id="related" lang="en">Related products</item>
+		<item id="related" lang="ru">Похожие товары</item>
+		<item id="product_tags" lang="ru">Тэги товаров</item>
+		<item id="tag_related" lang="ru">Похожие по тегам</item>
+		<item id="product_tags" lang="en">Product tags</item>
+		<item id="tag_related" lang="en">Tag related</item>
+		<item id="1c_tags" lang="ru">Теги</item>
+		<item id="1c_tags" lang="en">Tags</item>
+		<item id="no_related_found" lang="ru">Похожих товаров не задано</item>
+		<item id="no_related_found" lang="en">No related products defined for this product</item>
+	</language_variables>
+</addon>

@@ -1,0 +1,1 @@
+INSERT INTO cscart_settings_objects (`object_id`, `edition_type`, `name`, `section_id`, `section_tab_id`, `type`, `value`, `position`, `is_global`) VALUES ('6157', 'ROOT', 'aramex_enabled', 7, 0, 'C', 'Y', 90, 'Y');
